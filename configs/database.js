@@ -46,16 +46,23 @@ export const Order = sequelize.define('Order', {
 
 export const Inventory = sequelize.define('Inventory', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    date: DataTypes.DATE,
-    type: DataTypes.STRING,
-    year: DataTypes.INTEGER,
-    make: DataTypes.STRING,
-    model: DataTypes.STRING,
-    trim: DataTypes.STRING,
-    mileage: DataTypes.INTEGER,
-    price: DataTypes.INTEGER,
-    url: DataTypes.STRING,
-    vin: DataTypes.STRING
+    date: { type: DataTypes.DATEONLY, allowNull: false },
+    type: { type: DataTypes.STRING, allowNull: false },
+    year: { type: DataTypes.INTEGER, allowNull: false },
+    make: { type: DataTypes.STRING, allowNull: false },
+    model: { type: DataTypes.STRING, allowNull: false },
+    trim: { type: DataTypes.STRING, allowNull: true }, // Explicitly allowed empty
+    mileage: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    price: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    url: { type: DataTypes.STRING, allowNull: false },
+    vin: { type: DataTypes.STRING, allowNull: false }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['date', 'url']
+        }
+    ]
 });
 
 // Associations

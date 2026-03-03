@@ -13,25 +13,13 @@
   },
   {
     "name": "Blaise Alexander Chevrolet of Mansfield",
-    "used_url": null,
-    "new_url": "https://www.blaisechevymansfield.com/searchnew.aspx?pt=1",
-    "base_url": "https://www.blaisechevymansfield.com"
-  },
-  {
-    "name": "Blaise Alexander Chevrolet of Mansfield",
     "used_url": "https://www.blaisechevymansfield.com/searchused.aspx?Dealership=Blaise%20Alexander%20Chevrolet%20of%20Mansfield&pt=1",
-    "new_url": null,
+    "new_url": "https://www.blaisechevymansfield.com/searchnew.aspx?pt=1",
     "base_url": "https://www.blaisechevymansfield.com"
   },
   {
     "name": "Elkland Chevy",
     "used_url": "https://www.elklandchevy.com/searchused.aspx?Location=Elkland%2C%20PA&pt=1",
-    "new_url": null,
-    "base_url": "https://www.elklandchevy.com"
-  },
-  {
-    "name": "Elkland Chevy",
-    "used_url": null,
     "new_url": "https://www.elklandchevy.com/searchnew.aspx?Location=Elkland%2C%20PA",
     "base_url": "https://www.elklandchevy.com"
   },
@@ -48,45 +36,21 @@
     "base_url": "https://www.blaisealexanderfordofmansfield.com"
   },
   {
-    "name": "Blaise Alexander Ford of Mansfield",
-    "used_url": "https://www.blaisealexanderfordofmansfield.com/used-inventory/index.htm?accountId=blaisealexandermansfieldfordfd",
-    "new_url": null,
-    "base_url": "https://www.blaisealexanderfordofmansfield.com"
-  },
-  {
-    "name": "Blaise Alexander Chrysler Dodge Jeep Ram Mansfield",
-    "used_url": null,
-    "new_url": "https://www.blaisealexandercdjr.com/new-inventory/index.htm",
-    "base_url": "https://www.blaisealexandercdjr.com"
-  },
-  {
     "name": "Blaise Alexander Chrysler Dodge Jeep Ram Mansfield",
     "used_url": "https://www.blaisealexandercdjr.com/used-inventory/index.htm?accountId=blaisealexanderchryslerdodgejecllc",
-    "new_url": null,
+    "new_url": "https://www.blaisealexandercdjr.com/new-inventory/index.htm",
     "base_url": "https://www.blaisealexandercdjr.com"
   },
   {
     "name": "Chilson Wilcox",
     "used_url": "https://www.chilsonwilcox.net/used-inventory/index.htm",
-    "new_url": null,
-    "base_url": "https://www.chilsonwilcox.net"
-  },
-  {
-    "name": "Chilson Wilcox",
-    "used_url": null,
     "new_url": "https://www.simmonsrockwellnissan.com/new-inventory/index.htm",
     "base_url": "https://www.chilsonwilcox.net"
-  },
-  {
-    "name": "Simmons-Rockwell Nissan",
-    "used_url": null,
-    "new_url": "https://www.simmonsrockwellnissan.com/new-inventory/index.htm",
-    "base_url": "https://www.simmonsrockwellnissan.com"
   },
   {
     "name": "Simmons-Rockwell Nissan",
     "used_url": "https://www.simmonsrockwellnissan.com/used-inventory/index.htm",
-    "new_url": null,
+    "new_url": "https://www.simmonsrockwellnissan.com/new-inventory/index.htm",
     "base_url": "https://www.simmonsrockwellnissan.com"
   },
   {

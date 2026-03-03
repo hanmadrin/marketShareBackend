@@ -1,52 +1,71 @@
 import fs from 'fs';
 import path from 'path';
 import csv from 'csv-parser';
-import { Inventory, Dealership, sequelize } from './database.js'; // Adjust path
+import { Inventory, Dealership, sequelize } from './database.js';
+
+const CHUNK_SIZE = 1000; // Adjust based on your memory/db limits
 
 const importInventory = async () => {
-    const results = [];
     const csvPath = path.resolve('./data/inventory.csv');
+    let currentChunk = [];
+    let totalImported = 0;
 
-    // 1. Get all dealerships to map names to IDs
-    const dealers = await Dealership.findAll();
-    const dealerMap = new Map(dealers.map(d => [d.name, d.id]));
+    try {
+        // 1. Map Dealers for ID lookups
+        const dealers = await Dealership.findAll();
+        const dealerMap = new Map(dealers.map(d => [d.name, d.id]));
 
-    fs.createReadStream(csvPath)
-        .pipe(csv())
-        .on('data', (data) => {
-            // Format: "2/9/2026" -> "2026-02-09"
-            const rawDate = new Date(data.Date);
-            const formattedDate = !isNaN(rawDate) ? rawDate.toISOString().split('T')[0] : null;
+        // 2. Process Stream in Chunks
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(csvPath)
+                .pipe(csv())
+                .on('data', async (data) => {
+                    const rawDate = new Date(data.Date);
+                    const formattedDate = !isNaN(rawDate) ? rawDate.toISOString().split('T')[0] : null;
 
-            results.push({
-                date: formattedDate,
-                type: data.Used,
-                year: parseInt(data.Year),
-                make: data.Make,
-                model: data.Model,
-                trim: data.Trim,
-                mileage: isNaN(parseInt(data.Mileage || 0)) ? 0 : parseInt(data.Mileage || 0),
-                price: isNaN(parseInt(data.Price || 0)) ? 0 : (parseInt(data.Price || 0)),
-                url: data.URL,
-                vin: data['Vin#'],
-                dealershipId: dealerMap.get(data['Dealership Name'])
-            });
-        })
-        .on('end', async () => {
-            try {
-                const CHUNK_SIZE = 500; // Try 500 records at a time
-                for (let i = 0; i < results.length; i += CHUNK_SIZE) {
-                    const chunk = results.slice(i, i + CHUNK_SIZE);
-                    await Inventory.bulkCreate(chunk);
-                    console.log(`Imported ${i + chunk.length} records...`);
-                }
-                console.log(`Successfully imported ${results.length} inventory items, Sir.`);
-            } catch (error) {
-                console.error('Import failed:', error);
-            } finally {
-                await sequelize.close();
-            }
+                    currentChunk.push({
+                        date: formattedDate,
+                        type: data.Used,
+                        year: parseInt(data.Year) || 0,
+                        make: data.Make,
+                        model: data.Model,
+                        trim: data.Trim || null,
+                        mileage: parseInt(data.Mileage) || 0,
+                        price: parseInt(data.Price) || 0,
+                        url: data.URL,
+                        vin: data['Vin#'],
+                        dealershipId: dealerMap.get(data['Dealership Name']) || null
+                    });
+
+                    // When chunk is full, pause stream and save to DB
+                    if (currentChunk.length >= 500) {
+                        const stream = fs.createReadStream(csvPath).pause(); // Pause to prevent memory overflow
+                        const batch = [...currentChunk];
+                        currentChunk = []; // Clear chunk
+                        
+                        await Inventory.bulkCreate(batch, { ignoreDuplicates: true });
+                        totalImported += batch.length;
+                        stream.resume();
+                    }
+                })
+                .on('end', async () => {
+                    // Import remaining records
+                    if (currentChunk.length > 0) {
+                        await Inventory.bulkCreate(currentChunk, { ignoreDuplicates: true });
+                        totalImported += currentChunk.length;
+                    }
+                    resolve();
+                })
+                .on('error', reject);
         });
+
+        console.log(`Sir, import complete. Processed approximately ${totalImported} records.`);
+
+    } catch (error) {
+        console.error("Sir, an error occurred during the chunked import:", error);
+    } finally {
+        await sequelize.close();
+    }
 };
 
 importInventory();
