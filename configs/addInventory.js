@@ -3,7 +3,6 @@ import path from 'path';
 import csv from 'csv-parser';
 import { Inventory, Dealership, sequelize } from './database.js';
 
-const CHUNK_SIZE = 1000; // Adjust based on your memory/db limits
 
 const importInventory = async () => {
     const csvPath = path.resolve('./data/inventory.csv');

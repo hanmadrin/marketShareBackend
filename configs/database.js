@@ -2,7 +2,6 @@ import { Sequelize, DataTypes } from 'sequelize';
 import dotenv from 'dotenv';
 
 dotenv.config({quiet: true});
-
 // Initialize Connection
 export const sequelize = new Sequelize(
     process.env.DATABASE_NAME,
@@ -46,12 +45,13 @@ export const Order = sequelize.define('Order', {
 
 export const Inventory = sequelize.define('Inventory', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    date: { type: DataTypes.DATEONLY, allowNull: false },
+    first_seen: { type: DataTypes.DATEONLY, allowNull: false },
+    last_seen: { type: DataTypes.DATEONLY, allowNull: false },
     type: { type: DataTypes.STRING, allowNull: false },
     year: { type: DataTypes.INTEGER, allowNull: false },
     make: { type: DataTypes.STRING, allowNull: false },
     model: { type: DataTypes.STRING, allowNull: false },
-    trim: { type: DataTypes.STRING, allowNull: true }, // Explicitly allowed empty
+    trim: { type: DataTypes.STRING, allowNull: true },
     mileage: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     url: { type: DataTypes.STRING, allowNull: false },
@@ -60,9 +60,13 @@ export const Inventory = sequelize.define('Inventory', {
     indexes: [
         {
             unique: true,
-            fields: ['date', 'url']
+            fields: ['url'] // URL is now the unique identifier for a vehicle record
         }
-    ]
+    ],
+    timestamps: false,
+    // createdat, updated at false
+
+
 });
 
 // Associations
