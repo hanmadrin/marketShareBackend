@@ -29,6 +29,9 @@ export const Dealership = sequelize.define('Dealership', {
     new_url: DataTypes.STRING,
     base_url: DataTypes.STRING,
     inventory_common_url: DataTypes.STRING
+}, {
+    tableName: 'dealerships', // <-- specify table name here
+    timestamps: false // optional
 });
 
 export const User = sequelize.define('User', {
@@ -36,11 +39,17 @@ export const User = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true }
+}, {
+    tableName: 'users', // <-- specify table name here
+    timestamps: false // optional
 });
 
 export const Order = sequelize.define('Order', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     type: DataTypes.STRING
+}, {
+    tableName: 'orders', // <-- specify table name here
+    timestamps: false // optional
 });
 
 export const Inventory = sequelize.define('Inventory', {
@@ -57,6 +66,7 @@ export const Inventory = sequelize.define('Inventory', {
     url: { type: DataTypes.STRING, allowNull: false },
     vin: { type: DataTypes.STRING, allowNull: false }
 }, {
+    tableName: 'inventories',
     indexes: [
         {
             unique: true,
