@@ -21,15 +21,15 @@ const analyticsController = async (req, res) => {
     const totalSoldValue = soldGraphdata.map(r => r.value).reduce((a, b) => a + b, 0);
     // date difference between soldGraphdata first and last day
     // console.log(differenceInDays(new Date("Mar 5 2026"),new Date("Feb 6 2026")))
-    const totalDateCount =
-      soldGraphdata.length > 1
-        ? differenceInDays(
-          new Date(soldGraphdata[soldGraphdata.length - 1].date),
-          new Date(soldGraphdata[0].date)
-        )
-        : soldGraphdata.length;
+    // const totalDateCount =
+    //   soldGraphdata.length > 1
+    //     ? differenceInDays(
+    //       new Date(soldGraphdata[soldGraphdata.length - 1].date),
+    //       new Date(soldGraphdata[0].date)
+    //     )
+    //     : soldGraphdata.length;
     // total date count = end date - start date
-    // const totalDateCount = differenceInDays(startOfDay(new Date(endDate)),startOfDay(new Date(startDate))) + 1
+    const totalDateCount = differenceInDays(startOfDay(new Date(endDate)),startOfDay(new Date(startDate))) + 1
     // console.log(totalDateCount)
     return res.json({
       filters: res.locals.filters,
