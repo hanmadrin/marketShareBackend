@@ -18,11 +18,11 @@ const getInventoryAdded = async (filters, user) => {
                     AND dealershipId != :dealershipId THEN 1 ELSE 0 END) AS competitor_count,
             COUNT(*) AS total_count
         FROM inventories
-        WHERE first_seen BETWEEN :startDate AND :endDate
+        WHERE DATE(first_seen) BETWEEN DATE(:startDate) AND DATE(:endDate)
             AND dealershipId IN (:competitorIds)
             ${typeCondition}
-            AND first_seen > (
-                SELECT MIN(first_seen) FROM inventories
+            AND DATE(first_seen) > (
+                SELECT DATE(MIN(first_seen)) FROM inventories
             )
         GROUP BY make, model
         ORDER BY total_count DESC
@@ -77,12 +77,12 @@ export const getInventoryAddedRawData = async (filters,makeModel) => {
         JOIN dealerships d
             ON d.id = i.dealershipId
         WHERE 
-            i.first_seen BETWEEN :startDate AND :endDate
+            DATE(i.first_seen) BETWEEN DATE(:startDate) AND DATE(:endDate)
             AND i.dealershipId IN (:competitorIds)
             ${typeCondition}
             ${makeModelCondition}
-            AND i.first_seen > (
-                SELECT MIN(first_seen) FROM inventories
+            AND DATE(i.first_seen) > (
+                SELECT DATE(MIN(first_seen)) FROM inventories
             )
         ORDER BY i.make, i.model, i.first_seen
     `;
