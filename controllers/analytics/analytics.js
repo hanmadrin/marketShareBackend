@@ -31,6 +31,9 @@ const analyticsController = async (req, res) => {
     // total date count = end date - start date
     const totalDateCount = differenceInDays(startOfDay(new Date(endDate)),startOfDay(new Date(startDate))) + 1
     // console.log(totalDateCount)
+    const soldTotalCountExceptLast = soldGraphdata.length > 1 ? soldGraphdata.slice(0, soldGraphdata.length - 1).map(r => r.value).reduce((a, b) => a + b, 0) : 0;
+    const inventoryAddedTotalCountExceptFirst = newStockGraphdata.length > 1 ? newStockGraphdata.slice(1, newStockGraphdata.length).map(r => r.value).reduce((a, b) => a + b, 0) : 0;
+    console.log(inventoryAddedTotalCountExceptFirst,soldTotalCountExceptLast, inventoryAddedTotalCountExceptFirst-soldTotalCountExceptLast)
     return res.json({
       filters: res.locals.filters,
       dashboard: {
