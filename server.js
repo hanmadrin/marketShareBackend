@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 
 import ExpressError from './utilities/expressError.js';
 import frontendApi from './routers/frontendApi.js';
+import authRouter from './routers/auth.js';
 
 const port = process.env.PORT || 4566;
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(json({ limit: '50mb' }));
 app.use(urlencoded({ limit: '50mb', extended: true }));
 
+app.use('/api/auth', authRouter);
 app.use('/api', frontendApi);
 
 app.use(express.static(path.join(__dirname, '../marketShareFrontend/dist')));
