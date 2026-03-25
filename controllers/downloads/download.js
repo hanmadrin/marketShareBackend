@@ -9,17 +9,19 @@ const downloadsController = async (req, res) => {
     // console.log(action)
     switch (action) {
         case 'makeModelInventory':
-        case"inventoryGraph":
             rawData = await getInventoryRawData(res.locals.filters,makeModel);
+            break;
+        case "inventoryGraph":
+            rawData = await getInventoryRawData(res.locals.filters,makeModel,"graph");
             break;
         case 'makeModelAdded':
         case'inventoryAddedGraph':
             rawData = await getInventoryAddedRawData(res.locals.filters,makeModel);
             break;
-        case 'makeModelSold':
-        case 'inventorySoldGraph':
-        case 'salesByDealership':
-            rawData = await getInventorySoldRawData(res.locals.filters,makeModel);
+            case 'makeModelSold':
+            case 'inventorySoldGraph':
+            case 'salesByDealership':
+                    rawData = await getInventorySoldRawData(res.locals.filters,makeModel);
             break;
         case 'topSelling':
             rawData = await getTopSellingVehiclesRawData(res.locals.filters,makeModel);

@@ -70,14 +70,19 @@ export const getInventory = async (filters, user) => {
     return { items, total: totals };
 
 };
-export const getInventoryRawData = async (filters,makeModel) => {
+export const getInventoryRawData = async (filters, makeModel, slot) => {
     const { competitors, dateRange: { startDate, endDate }, vehicleType } = filters;
     const competitorIds = competitors.filter(c => c.selected).map(c => c.id);
     const typeFilter = ['new', 'used'].includes(vehicleType) ? vehicleType : null;
 
-    const typeCondition = typeFilter ? `AND type = ${sequelize.escape(typeFilter)}` : '';
-    // all fields
+    const typeCondition = typeFilter ? `AND i.type = ${sequelize.escape(typeFilter)}` : '';
     const makeModelCondition = makeModel ? `AND CONCAT(i.make, ' ', i.model) = ${sequelize.escape(makeModel)}` : '';
+
+    // Logic for the target date based on the 'slot'
+    const dateSelector = slot === "graph" 
+        ? `DATE(:endDate)` 
+        : `(SELECT MAX(first_seen) FROM inventories WHERE dealershipId IN (:competitorIds) ${typeCondition})`;
+
     const query = `
         SELECT 
             i.last_seen AS Date,
@@ -90,30 +95,18 @@ export const getInventoryRawData = async (filters,makeModel) => {
             i.url AS URL,
             i.type AS Type,
             i.vin AS VIN
-
         FROM (
-            SELECT DISTINCT DATE(first_seen) AS date_series
-            FROM inventories
-            WHERE first_seen = (
-                SELECT MAX(first_seen) 
-                FROM inventories 
-                WHERE dealershipId IN (:competitorIds) ${typeCondition}
-            )
+            SELECT DISTINCT ${dateSelector} AS date_series
         ) AS calendar
-
         JOIN inventories i
-            ON i.first_seen <= calendar.date_series
-            AND i.last_seen >= calendar.date_series
-
+            ON DATE(i.first_seen) <= calendar.date_series
+            AND DATE(i.last_seen) >= calendar.date_series
         JOIN dealerships d
             ON d.id = i.dealershipId
-
         WHERE 1=1
             ${typeCondition}
             ${makeModelCondition}
             AND i.dealershipId IN (:competitorIds)
-
-
         ORDER BY i.make, i.model;
     `;
 
@@ -123,8 +116,7 @@ export const getInventoryRawData = async (filters,makeModel) => {
     });
 
     return results;
-
-}
+};
 export const getInventoryDate = async (filters) => {
     const { competitors, dateRange: { startDate, endDate }, vehicleType } = filters;
     const competitorIds = competitors.filter(c => c.selected).map(c => c.id);

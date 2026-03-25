@@ -144,43 +144,43 @@ export const getInventoryGraphData = async (filters) => {
     //     ORDER BY calendar.date_series ASC;
     // `;
     const query = `WITH RECURSIVE calendar AS (
-    SELECT DATE(:startDate) AS date_series
-    UNION ALL
-    SELECT DATE_ADD(date_series, INTERVAL 1 DAY)
-    FROM calendar
-    WHERE date_series < DATE(:endDate)
-),
+            SELECT DATE(:startDate) AS date_series
+            UNION ALL
+            SELECT DATE_ADD(date_series, INTERVAL 1 DAY)
+            FROM calendar
+            WHERE date_series < DATE(:endDate)
+        ),
 
-daily_data AS (
-    SELECT 
-        calendar.date_series,
-        (
-            SELECT COUNT(*) 
-            FROM inventories i
-            WHERE i.dealershipId IN (:competitorIds)
-            ${typeFilter}
-            AND i.first_seen <= calendar.date_series
-            AND (i.last_seen >= calendar.date_series OR i.last_seen IS NULL)
-        ) AS daily_inventory_count
-    FROM calendar
-),
+        daily_data AS (
+            SELECT 
+                calendar.date_series,
+                (
+                    SELECT COUNT(*) 
+                    FROM inventories i
+                    WHERE i.dealershipId IN (:competitorIds)
+                    ${typeFilter}
+                    AND i.first_seen <= calendar.date_series
+                    AND (i.last_seen >= calendar.date_series OR i.last_seen IS NULL)
+                ) AS daily_inventory_count
+            FROM calendar
+        ),
 
-marked AS (
-    SELECT *,
-        SUM(CASE WHEN daily_inventory_count > 0 THEN 1 ELSE 0 END)
-            OVER (ORDER BY date_series) AS grp_start,
-        SUM(CASE WHEN daily_inventory_count > 0 THEN 1 ELSE 0 END)
-            OVER (ORDER BY date_series DESC) AS grp_end
-    FROM daily_data
-)
+        marked AS (
+            SELECT *,
+                SUM(CASE WHEN daily_inventory_count > 0 THEN 1 ELSE 0 END)
+                    OVER (ORDER BY date_series) AS grp_start,
+                SUM(CASE WHEN daily_inventory_count > 0 THEN 1 ELSE 0 END)
+                    OVER (ORDER BY date_series DESC) AS grp_end
+            FROM daily_data
+        )
 
-SELECT 
-    DATE_FORMAT(date_series, '%b %d') AS entry_date,
-    daily_inventory_count
-FROM marked
-WHERE grp_start > 0   -- remove leading zeros
-  AND grp_end > 0     -- remove trailing zeros
-ORDER BY date_series;`;
+        SELECT 
+            DATE_FORMAT(date_series, '%b %d') AS entry_date,
+            daily_inventory_count
+        FROM marked
+        WHERE grp_start > 0   -- remove leading zeros
+        AND grp_end > 0     -- remove trailing zeros
+        ORDER BY date_series;`;
     const results = await sequelize.query(query, {
         replacements: { startDate, endDate, competitorIds },
         type: QueryTypes.SELECT,
