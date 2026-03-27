@@ -13,7 +13,7 @@ import ExpressError from './utilities/expressError.js';
 import frontendApi from './routers/frontendApi.js';
 import authRouter from './routers/auth.js';
 
-const port = process.env.PORT || 4566;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(json({ limit: '50mb' }));
