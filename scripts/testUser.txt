@@ -1,0 +1,2 @@
+node ./scripts/addUser.js michael secret123! michael@matthewsmotorcompany.com 5
+node ./scripts/addUser.js jason secret123@ jason@matthewsmotorcompany.com 5
